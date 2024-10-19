@@ -3,7 +3,7 @@ namespace :import do
   task recipes_in_batch: :environment do
     json_file_path = Rails.root.join('db', 'recipes-en.json')
     recipes_data = JSON.parse(File.read(json_file_path))
-    batch_size = 1000
+    batch_size = 100
 
     import_recipes(recipes_data, batch_size)
 
