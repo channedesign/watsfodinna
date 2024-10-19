@@ -1,0 +1,27 @@
+<h1>Recipes</h1>
+<%= form_with(url: recipes_path, method: :get, local: true) do %>
+  <%= label_tag :ingredients, "Enter ingredients (comma-separated):" %>
+  <%= text_field_tag :ingredients, '', size: 100 %>
+  <%= submit_tag "Search" %>
+<% end %>
+<br>
+<%== pagy_nav(@pagy) if @pagy.pages > 1 %>
+<%== pagy_info(@pagy) %>
+<br>
+<ul>
+    <% @recipes.each do |recipe| %>
+    <li>
+      <strong>Title:</strong> <%= recipe.title %><br>
+      <strong>Cook Time:</strong> <%= recipe.cook_time %> minutes<br>
+      <strong>Prep Time:</strong> <%= recipe.prep_time %> minutes<br>
+      <strong>Ingredients:</strong>
+      <ul>
+        <% recipe.ingredients.each do |ingredient| %>
+          <li><%= ingredient.name %></li>
+        <% end %>
+      </ul>
+      <strong>Ratings:</strong> <%= recipe.ratings %><br>
+      <strong>Author:</strong> <%= recipe.author %><br>
+    </li>
+  <% end %>
+</ul>
