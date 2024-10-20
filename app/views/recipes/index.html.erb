@@ -1,7 +1,23 @@
+<% flash.each do |key, message| %>
+  <div><%= message %></div>
+<% end %>
+
 <h1>Recipes</h1>
 <%= form_with(url: recipes_path, method: :get, local: true) do %>
   <%= label_tag :ingredients, "Enter ingredients (comma-separated):" %>
   <%= text_field_tag :ingredients, '', size: 100 %>
+  <div>Optional:</div>
+  <div>
+    <%= label_tag :max_cook_time, "Max cooking time (in min):" %>
+    <%= text_field_tag :max_cook_time %>
+    <br>
+    <%= label_tag :max_cook_time, "Max preparation time (in min):" %>
+    <%= text_field_tag :max_prep_time %>
+    <br>
+    <%= label_tag :min_ratings, "Min rating:" %>
+    <%= text_field_tag :min_ratings %>
+  </div>
+  
   <%= submit_tag "Search" %>
 <% end %>
 <br>
