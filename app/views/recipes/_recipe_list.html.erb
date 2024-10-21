@@ -1,0 +1,17 @@
+<% recipes.each do |recipe| %>
+    <li data-ratings="<%= recipe.ratings %>" data-cook-time="<%= recipe.cook_time %>" data-prep-time="<%= recipe.prep_time %>">
+    <strong>Title:</strong> <%= recipe.title %><br>
+    <strong>Cook Time:</strong> <%= recipe.cook_time %> minutes<br>
+    <strong>Prep Time:</strong> <%= recipe.prep_time %> minutes<br>
+    <strong>Ingredients:</strong>
+    <ul>
+        <% recipe.ingredients.each do |ingredient| %>
+        <li><%= ingredient.name %></li>
+        <% end %>
+    </ul>
+    <strong>Ratings:</strong> <%= recipe.ratings %><br>
+    <strong>Author:</strong> <%= recipe.author %><br>
+    </li>
+    <br><br>
+<% end %>
+

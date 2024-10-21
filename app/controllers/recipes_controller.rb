@@ -1,30 +1,29 @@
 class RecipesController < ApplicationController
   def index
     begin 
-      if params[:ingredients].present?
-        @ingredients = params[:ingredients].split(",").map(&:strip).map(&:downcase)
+      recipe_search_service = RecipeSearchService.new(params)
+      @pagy, @recipes = pagy(recipe_search_service.call)
 
-        recipe_ids = Recipe.with_all_inputed_ingredients(@ingredients).pluck(:id) # can't use .includes(:ingredients) because of the use of GROUP BY with aggregate functions in ActiveRecord.
-        recipes = Recipe.includes(:ingredients).where(id: recipe_ids)
-
-        # Apply optional params if present
-        recipes = recipes.with_max_cooking_time(params[:max_cook_time]) if params[:max_cook_time].present?
-        recipes = recipes.with_max_preparation_time(params[:max_prep_time]) if params[:max_prep_time].present?
-        recipes = recipes.with_min_ratings(params[:min_ratings]) if params[:min_ratings].present?
-
-        @pagy, @recipes = pagy(recipes)
-      else
-        @pagy, @recipes = pagy(Recipe.includes(:ingredients).all)
+      respond_to do |format|
+        format.html
+        format.json {
+          render json: {
+            recipes_html: render_to_string(partial: 'recipe_list', locals: { recipes: @recipes }, formats: [:html]),
+            pagination_html: render_to_string(partial: 'pagination', locals: { pagy: @pagy }, formats: [:html])
+          }
+        }
       end
     
-    rescue ActiveRecord::RecordNotFound => e
+    rescue ActiveRecord::RecordNotFound
       flash.now[:alert] = "No recipes found."
-      @pagy, @recipes = pagy(Recipe.includes(:ingredients).none)
+      @pagy, @recipes = pagy(Recipe.none)
+      render json: { error: "No recipes found" }, status: :not_found
 
     rescue => e
       flash.now[:alert] = "An error occurred: #{e.message}"
-      @pagy, @recipes = pagy(Recipe.includes(:ingredients).none)
+      @pagy, @recipes = pagy(Recipe.none)
       Rails.logger.error("Error fetching recipes: #{e.message}")
+      render json: { error: "An error occurred: #{e.message}" }, status: :internal_server_error
     end
   end
 end

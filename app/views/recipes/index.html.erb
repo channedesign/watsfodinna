@@ -21,23 +21,17 @@
   <%= submit_tag "Search" %>
 <% end %>
 <br>
-<%== pagy_nav(@pagy) if @pagy.pages > 1 %>
+<div id="pagination">
+    <%= render "pagination", pagy: @pagy %>
+</div>
 <%== pagy_info(@pagy) %>
 <br>
-<ul>
-    <% @recipes.each do |recipe| %>
-    <li>
-      <strong>Title:</strong> <%= recipe.title %><br>
-      <strong>Cook Time:</strong> <%= recipe.cook_time %> minutes<br>
-      <strong>Prep Time:</strong> <%= recipe.prep_time %> minutes<br>
-      <strong>Ingredients:</strong>
-      <ul>
-        <% recipe.ingredients.each do |ingredient| %>
-          <li><%= ingredient.name %></li>
-        <% end %>
-      </ul>
-      <strong>Ratings:</strong> <%= recipe.ratings %><br>
-      <strong>Author:</strong> <%= recipe.author %><br>
-    </li>
-  <% end %>
-</ul>
+<div data-controller="recipe-sort">
+    <button data-action="click->recipe-sort#toggleSort" data-sort-by="ratings" data-current-order="<%= params[:order] == 'desc' ? 'asc' : 'desc' %>">Sort by Ratings</button>
+    <button data-action="click->recipe-sort#toggleSort" data-sort-by="cook_time" data-current-order="<%= params[:order] == 'asc' ? 'desc' : 'asc' %>">Sort by Cook Time</button>
+    <button data-action="click->recipe-sort#toggleSort" data-sort-by="prep_time" data-current-order="<%= params[:order] == 'asc' ? 'desc' : 'asc' %>">Sort by Prep Time</button>
+</div>
+<br>
+<div  id="recipe-list">
+    <%= render "recipe_list", recipes: @recipes %>
+</div>
